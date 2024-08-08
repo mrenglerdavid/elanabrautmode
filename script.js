@@ -1,1 +1,1 @@
-gsap.from(".hero-section", { scale: 0, opacity: 0});
+gsap.from(".bold-text-3", { scale: 0, opacity: 0});
