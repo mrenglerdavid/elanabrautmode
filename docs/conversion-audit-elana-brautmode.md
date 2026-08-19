@@ -155,7 +155,7 @@ Hero and many images are dimensioned via background CSS rather than `<img width/
 | :--- | :--- |
 | Cinematic “Stell dir vor…” italic | Does not inform or convert |
 | English Search / Newsletter chrome | Breaks scan trust on a German bridal site |
-| Leftover ecommerce routes `/checkout`, `/paypal-checkout`, `/order-confirmation`, `/product`, `/sku` | Template residue; confuses crawlers and some visitors |
+| Leftover ecommerce routes `/checkout`, `/paypal-checkout`, `/order-confirmation`, `/product`, `/sku` | **Cannot be deleted** (Cartelle Ecommerce utility/templates). See “Retiring leftover ecommerce routes” below. |
 | Draft location pages (Offenburg, Pforzheim, Sinzheim) | Fine as drafts; do not publish until copy is conversion-complete |
 | 404 title “Not Found” / 401 “Protected page” | English system pages |
 
@@ -246,6 +246,43 @@ The homepage’s job is to get a scanning bride onto that page in one glance. An
 
 ---
 
+## Retiring leftover ecommerce routes
+
+These URLs came from the Cartelle Ecommerce template. **Webflow will not let you trash them.**
+
+| URL | Live today | Type | Can Designer delete it? |
+| :--- | :--- | :--- | :--- |
+| `/checkout` | 200, `noindex`, not in sitemap, not linked from the homepage | Ecommerce **utility** page (`Elana-Info3`) | No |
+| `/paypal-checkout` | 200, `noindex`, not in sitemap | Ecommerce **utility** page (`Elana-Infos2`) | No |
+| `/order-confirmation` | 200, `noindex`, not in sitemap | Ecommerce **utility** page (`Elana-Infos`) | No |
+| `/product`, `/sku`, `/category` | **404** (Products / SKUs / Collections collections are empty) | Ecommerce **collection templates** | No (system collections stay after Ecommerce is on) |
+
+The Data API also refuses `draft: true` on `/checkout` (`validation_error`). Once Ecommerce is enabled on a Webflow project, it cannot be turned off; Products / SKUs / Categories cannot be deleted.
+
+### What actually removes them for visitors
+
+1. **301 redirects (the real cleanup)** in Webflow: **Site settings → Publishing → 301 Redirects**:
+
+   | Old path | Redirect to |
+   | :--- | :--- |
+   | `/checkout` | `/termin` |
+   | `/paypal-checkout` | `/termin` |
+   | `/order-confirmation` | `/termin` |
+
+   `/product` and `/sku` already 404. Add redirects only if Search Console ever shows hits.
+
+2. **Visitor redirect in page custom code (unpublished, staged):** head of the three utility pages now has `noindex,nofollow` plus `location.replace("/termin")`. Goes live on the next site publish. This is a 200 + client redirect, not a 301 — still add the 301s above.
+
+3. **Do not** try to delete Products / SKUs / Collections in the CMS, and do not restore a backup unless you are sure it predates Ecommerce. Rebuilding in a non-Ecommerce project is the only total removal; it is not worth it for three noindexed URLs.
+
+### Why crawlers are already mostly fine
+
+- None of these URLs appear in `https://elana-brautmode.de/sitemap.xml`
+- The three live utility pages already send `noindex`
+- The homepage does not link to them
+
+---
+
 ## Designer IDs touched (unpublished)
 
 | Change | Component / element |
@@ -259,6 +296,7 @@ The homepage’s job is to get a scanning bride onto that page in one glance. An
 | Search button “Suchen” | Search Wrap `17813dd9-…804d` / `…8050` `buttonText` |
 | Newsletter button + loading DE | Form `9afd2c0d-…7219` / `…7223` |
 | Newsletter success / error DE | Strings `…7226`, `…722b` |
+| Checkout / PayPal / order-confirmation → `/termin` | Page head custom code on `68f144eb…0445`, `…0457`, `…0458` |
 
 **Do not publish from this audit unless Ellen/ops explicitly ask.** Use the usual Webflow publish checklist (staging preview, form test, cookie banner on a clean mobile session).
 
