@@ -227,7 +227,7 @@ Not on the homepage:
 11. Collapse duplicate review H2s in Designer (several copies; one live heading is enough). Do not mass-delete without checking visibility.
 12. Stop Splide autoscroll; static logos/proof.
 13. Reduce Webflow entrance animations; keep hero instantly visible (pack already forces this).
-14. Drop unused ecommerce template pages from the sitemap or noindex them.
+14. Add 301s `/checkout`, `/paypal-checkout`, `/order-confirmation` → `/termin` in Site settings → Publishing (utility pages cannot be deleted).
 15. Align footer to Du **or** Sie; don’t mix.
 
 ---
@@ -280,6 +280,21 @@ The Data API also refuses `draft: true` on `/checkout` (`validation_error`). Onc
 - None of these URLs appear in `https://elana-brautmode.de/sitemap.xml`
 - The three live utility pages already send `noindex`
 - The homepage does not link to them
+
+### Can this Cartelle project become a “normal” site?
+
+**No.** Webflow’s help article [Webflow Ecommerce overview](https://help.webflow.com/hc/en-us/articles/33961345384339-Webflow-Ecommerce-overview) states: once Ecommerce is enabled, **you cannot deactivate or remove it**. An Ecommerce template turns it on by default. You also cannot delete Products / Categories / SKUs, and reserved slugs stay reserved.
+
+That is different from **disabling checkout** (the store):
+
+| Action | Where | What it does | What it does not do |
+| :--- | :--- | :--- | :--- |
+| Disable checkout | Designer → **Settings → Ecommerce → Checkout** → toggle off → Save | Stops cart/checkout from taking orders. Required before you can drop an **Ecommerce Site plan** and use a normal CMS/Core plan ([downgrade help](https://help.webflow.com/hc/en-us/articles/33961220482707-Downgrade-or-cancel-your-Site-plan)). | Does **not** delete `/checkout`, `/paypal-checkout`, `/order-confirmation`, Products, or SKUs. Does **not** strip Ecommerce JS from `webflow.js`. |
+| Empty Products / Categories | Ecommerce panel | `/product` and `/category` URLs 404 (already true on Elana). | Collections and template pages remain in Designer. |
+| 301 + `noindex` | Site settings → Publishing; page head | Hides leftover URLs from visitors and crawlers. | Ecommerce is still on the project. |
+| New site without Ecommerce | New blank/CMS project + copy/paste + CMS export/import | Only way to get a project with **zero** Ecommerce collections, utility pages, and commerce JS. Webflow Support has said they cannot strip it from an existing site either ([forum thread with Support reply](https://discourse.webflow.com/t/reduction-of-webflow-loading-times-commerce-enabled/284690)). | High effort. Keep current `elana-brautmode.de` unless measured JS bloat is hurting conversion. |
+
+**For Elana:** keep this project. Confirm checkout is **off** so you are not paying for an Ecommerce hosting plan. Add the 301s. Do not rebuild just to delete three noindexed utility pages.
 
 ---
 
